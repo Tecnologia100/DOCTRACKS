@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocuTrack Express - Manual e Instructivo de Usuario</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --primary-light: #e0e7ff;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --amber-500: #f59e0b;
+      --amber-50: #fffbeb;
+      --blue-500: #3b82f6;
+      --blue-50: #eff6ff;
+      --purple-500: #8b5cf6;
+      --purple-50: #f5f3ff;
+      --emerald-500: #10b981;
+      --emerald-50: #ecfdf5;
+      --rose-500: #f43f5e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--slate-100);
+      color: var(--slate-800);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #31104b 100%);
+      color: white;
+      padding: 40px 32px;
+      position: relative;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      color: #c7d2fe;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #94a3b8;
+      max-width: 650px;
+    }
+
+    .header-actions {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn-action {
+      background: white;
+      color: var(--slate-900);
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: var(--slate-100);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* NAV BAR */
+    .nav-bar {
+      display: flex;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--slate-200);
+      padding: 0 24px;
+      overflow-x: auto;
+      gap: 8px;
+    }
+
+    .nav-item {
+      padding: 14px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--slate-600);
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* MAIN CONTENT */
+    main {
+      padding: 36px 32px;
+    }
+
+    section {
+      margin-bottom: 48px;
+      scroll-margin-top: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--slate-900);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--slate-100);
+    }
+
+    .section-num {
+      background: var(--primary);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    /* CARDS */
+    .card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .card-highlight {
+      border-left: 4px solid var(--primary);
+      background: #fafafa;
+    }
+
+    /* GRID */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    /* USER CARD */
+    .user-card {
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 16px;
+      background: #ffffff;
+      transition: all 0.2s;
+    }
+
+    .user-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+    }
+
+    .user-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .user-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .icon-admin { background: #e0e7ff; color: #4338ca; }
+    .icon-tesoreria { background: #fef3c7; color: #b45309; }
+    .icon-planta { background: #dcfce7; color: #15803d; }
+
+    .user-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--slate-900);
+    }
+
+    .user-sub {
+      font-size: 12px;
+      color: var(--slate-600);
+    }
+
+    .cred-row {
+      background: var(--slate-50);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      border: 1px solid var(--slate-200);
+    }
+
+    .cred-key {
+      color: var(--slate-600);
+      font-weight: 500;
+    }
+
+    .cred-val {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    /* STEP FLOW */
+    .step-box {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      box-shadow: 0 4px 8px rgba(79, 70, 229, 0.25);
+    }
+
+    .step-content {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      font-size: 13.5px;
+      color: var(--slate-600);
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .badge-espera { background: var(--amber-50); color: #b45309; border: 1px solid #fde68a; }
+    .badge-transito { background: var(--blue-50); color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .badge-recibido { background: var(--purple-50); color: #6d28d9; border: 1px solid #ddd6fe; }
+    .badge-entregado { background: var(--emerald-50); color: #047857; border: 1px solid #a7f3d0; }
+
+    /* STATUS CARD */
+    .status-card {
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid var(--slate-200);
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .status-card.st-espera { border-top: 4px solid var(--amber-500); }
+    .status-card.st-transito { border-top: 4px solid var(--blue-500); }
+    .status-card.st-recibido { border-top: 4px solid var(--purple-500); }
+    .status-card.st-entregado { border-top: 4px solid var(--emerald-500); }
+
+    .status-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .status-desc {
+      font-size: 13px;
+      color: var(--slate-600);
+      line-height: 1.5;
+    }
+
+    .status-resp {
+      font-size: 12px;
+      background: var(--slate-50);
+      padding: 6px 10px;
+      border-radius: 6px;
+      color: var(--slate-700);
+      font-weight: 600;
+      border: 1px solid var(--slate-200);
+      margin-top: auto;
+    }
+
+    /* WORKFLOW ARROW */
+    .workflow-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 16px 0;
+      margin-bottom: 24px;
+    }
+
+    .wf-node {
+      flex: 1;
+      min-width: 170px;
+      text-align: center;
+      padding: 14px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+
+    .wf-arrow {
+      color: var(--slate-400);
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    /* FAQ ACCORDION */
+    .faq-item {
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .faq-question {
+      padding: 16px 20px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--slate-900);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      user-select: none;
+    }
+
+    .faq-question:hover {
+      background: var(--slate-50);
+    }
+
+    .faq-answer {
+      padding: 0 20px 16px 20px;
+      font-size: 13.5px;
+      color: var(--slate-600);
+      border-top: 1px solid var(--slate-100);
+      padding-top: 12px;
+    }
+
+    /* TIPS BOX */
+    .tip-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin: 16px 0;
+    }
+
+    .tip-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .tip-text {
+      font-size: 13.5px;
+      color: #1e40af;
+      line-height: 1.5;
+    }
+
+    .tip-text strong {
+      color: #172554;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--slate-50);
+      border-top: 1px solid var(--slate-200);
+      padding: 24px 32px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--slate-600);
+    }
+
+    /* PRINT STYLES */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .container {
+        box-shadow: none;
+        border: none;
+      }
+      .header-actions, .nav-bar {
+        display: none !important;
+      }
+      .step-box, .card, .user-card, .status-card {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="header-badge">
+        <span>📖 Guía Oficial de Operación</span>
+      </div>
+      <h1>DocuTrack Express</h1>
+      <p class="subtitle">Manual e instructivo paso a paso para el control y radicación de correspondencia inter-sedes (Administrativo, Tesorería y Planta).</p>
+      
+      <div class="header-actions">
+        <button onclick="window.print()" class="btn-action">
+          <span>🖨️ Imprimir / Guardar como PDF</span>
+        </button>
+        <a href="http://localhost:3000" target="_blank" class="btn-action btn-outline">
+          <span>🚀 Abrir Sistema en Vivo</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- NAVEGACIÓN RÁPIDA -->
+    <nav class="nav-bar">
+      <a href="#inicio" class="nav-item">1. Puesta en Marcha</a>
+      <a href="#usuarios" class="nav-item">2. Usuarios y Sedes</a>
+      <a href="#radicar" class="nav-item">3. Cómo Radicar</a>
+      <a href="#estados" class="nav-item">4. Ciclo de Vida</a>
+      <a href="#actualizar" class="nav-item">5. Cambiar Estados</a>
+      <a href="#filtros" class="nav-item">6. Búsqueda y Excel</a>
+      <a href="#faq" class="nav-item">7. Preguntas Frecuentes</a>
+    </nav>
+
+    <!-- CUERPO PRINCIPAL -->
+    <main>
+
+      <!-- 1. PUESTA EN MARCHA -->
+      <section id="inicio">
+        <h2 class="section-title">
+          <span class="section-num">1</span>
+          ¿Cómo iniciar el sistema en su computador?
+        </h2>
+        
+        <p style="margin-bottom: 16px; color: var(--slate-600); font-size: 14px;">
+          DocuTrack Express está diseñado para funcionar de manera inmediata en Windows <strong>sin necesidad de instalar librerías complejas ni configurar bases de datos</strong>.
+        </p>
+
+        <div class="step-box">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Ubique la carpeta del sistema</div>
+            <div class="step-desc">Abra la carpeta <code>DocuTrack-Express</code> o la carpeta principal donde descargó el proyecto.</div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Ejecute el iniciador directo</div>
+            <div class="step-desc">Haga <strong>doble clic</strong> sobre el archivo <strong><code>INICIAR.bat</code></strong>.</div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Apertura automática en el navegador</div>
+            <div class="step-desc">
+              El script iniciará el servidor local y abrirá automáticamente su navegador web en 
+              <strong><code>http://localhost:3000</code></strong>. ¡Listo para trabajar!
+            </div>
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text">
+            <strong>Consejo para el día a día:</strong> Puede crear un acceso directo de <code>INICIAR.bat</code> en el Escritorio de Windows para que cualquier usuario pueda arrancar el sistema con un solo clic.
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. USUARIOS Y SEDES -->
+      <section id="usuarios">
+        <h2 class="section-title">
+          <span class="section-num">2</span>
+          Usuarios y Credenciales de Acceso
+        </h2>
+
+        <p style="margin-bottom: 16px; color: var(--slate-600); font-size: 14px;">
+          El sistema cuenta con un administrador exclusivo por cada una de las 3 sedes físicas. Ingrese con el usuario correspondiente a su oficina:
+        </p>
+
+        <div class="grid-3">
+          <!-- Sede Administrativo -->
+          <div class="user-card">
+            <div class="user-header">
+              <div class="user-icon icon-admin">🏢</div>
+              <div>
+                <div class="user-title">Sede Administrativo</div>
+                <div class="user-sub">Recepción Central</div>
+              </div>
+            </div>
+            <div class="cred-row">
+              <span class="cred-key">Usuario:</span>
+              <span class="cred-val">admin_a</span>
+            </div>
+            <div class="cred-row">
+              <span class="cred-key">Contraseña:</span>
+              <span class="cred-val">admin123</span>
+            </div>
+            <div class="cred-row">
+              <span class="cred-key">Rol:</span>
+              <span class="cred-val">Administrador</span>
+            </div>
+          </div>
+
+          <!-- Sede Tesorería -->
+          <div class="user-card">
+            <div class="user-header">
+              <div class="user-icon icon-tesoreria">🏦</div>
+              <div>
+                <div class="user-title">Sede Tesorería</div>
+                <div class="user-sub">Finanzas y Pagos</div>
+              </div>
+            </div>
+            <div class="cred-row">
+              <span class="cred-key">Usuario:</span>
+              <span class="cred-val">admin_b</span>
+            </div>
+            <div class="cred-row">
+              <span class="cred-key">Contraseña:</span>
+              <span class="cred-val">admin123</span>
+            </div>
+            <div class="cred-row">
+              <span class="cred-key">Rol:</span>
+              <span class="cred-val">Administrador</span>
+            </div>
+          </div>
+
+          <!-- Sede Planta -->
+          <div class="user-card">
+            <div class="user-header">
+              <div class="user-icon icon-planta">🏭</div>
+              <div>
+                <div class="user-title">Sede Planta</div>
+                <div class="user-sub">Operaciones y Fábrica</div>
+              </div>
+            </div>
+            <div class="cred-row">
+              <span class="cred-key">Usuario:</span>
+              <span class="cred-val">admin_p</span>
+            </div>
+            <div class="cred-row">
+              <span class="cred-key">Contraseña:</span>
+              <span class="cred-val">admin123</span>
+            </div>
+            <div class="cred-row">
+              <span class="cred-key">Rol:</span>
+              <span class="cred-val">Administrador</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-icon">🔒</div>
+          <div class="tip-text">
+            <strong>Seguridad de Claves:</strong> Todas las contraseñas se almacenan con cifrado criptográfico PBKDF2. El usuario actual queda registrado como creador y firmante de cada movimiento.
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CÓMO RADICAR UN ENVÍO -->
+      <section id="radicar">
+        <h2 class="section-title">
+          <span class="section-num">3</span>
+          Paso a Paso: Cómo Radicar un Envío Nuevo
+        </h2>
+
+        <p style="margin-bottom: 16px; color: var(--slate-600); font-size: 14px;">
+          Cada vez que una sede despacha un sobre, valija, factura o contrato hacia otra sede, se debe generar un radicado oficial:
+        </p>
+
+        <div class="step-box">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Clic en el botón "+ Radicar Nuevo Envío"</div>
+            <div class="step-desc">Se encuentra destacado en color verde en la parte superior derecha de la pantalla principal.</div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Diligencie los datos de la ruta y personas</div>
+            <div class="step-desc">
+              <ul style="padding-left: 20px; margin-top: 6px; line-height: 1.8;">
+                <li><strong>Sede Origen:</strong> Sede desde donde sale el documento físico.</li>
+                <li><strong>Sede Destino:</strong> Sede que recibirá el documento.</li>
+                <li><strong>Remitente:</strong> Nombre de la persona o departamento que envía (Ej: <em>Contabilidad - Ana María</em>).</li>
+                <li><strong>Destinatario:</strong> Nombre de la persona o departamento que debe recibir (Ej: <em>Auditoría - Pedro Gómez</em>).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Especifique el tipo, prioridad y asunto</div>
+            <div class="step-desc">
+              <ul style="padding-left: 20px; margin-top: 6px; line-height: 1.8;">
+                <li><strong>Tipo:</strong> Correspondencia, Facturas/Cheques, Contratos/Legal, Valija Confidencial, o Muestras.</li>
+                <li><strong>Prioridad:</strong> Normal, Alta o Urgente.</li>
+                <li><strong>Asunto:</strong> Breve descripción del paquete (Ej: <em>Facturas quincenales para firma</em>).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Guardar y obtener número de radicado</div>
+            <div class="step-desc">
+              Haga clic en <strong>"Radicar Documento"</strong>. El sistema creará un código único e irrepetible (Ej: <strong><code>RAD-2026-0001</code></strong>). 
+              Escriba este número en el sobre o rótulo del paquete físico.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. CICLO DE VIDA DE UN ENVÍO -->
+      <section id="estados">
+        <h2 class="section-title">
+          <span class="section-num">4</span>
+          El Ciclo de Vida: Los 4 Estados del Envío
+        </h2>
+
+        <p style="margin-bottom: 20px; color: var(--slate-600); font-size: 14px;">
+          Todo documento físico viaja por una cadena de custodia estricta de 4 etapas consecutivas:
+        </p>
+
+        <!-- FLUJO VISUAL -->
+        <div class="workflow-container">
+          <div class="wf-node" style="background: var(--amber-50); border: 2px solid var(--amber-500); color: #92400e;">
+            🟡 1. EN ESPERA<br><span style="font-size: 11px; font-weight: normal;">En sede de origen</span>
+          </div>
+          <div class="wf-arrow">➔</div>
+          <div class="wf-node" style="background: var(--blue-50); border: 2px solid var(--blue-500); color: #1e40af;">
+            🔵 2. EN TRÁNSITO<br><span style="font-size: 11px; font-weight: normal;">Con el mensajero</span>
+          </div>
+          <div class="wf-arrow">➔</div>
+          <div class="wf-node" style="background: var(--purple-50); border: 2px solid var(--purple-500); color: #5b21b6;">
+            🟣 3. RECIBIDO EN SEDE<br><span style="font-size: 11px; font-weight: normal;">Llegó a destino</span>
+          </div>
+          <div class="wf-arrow">➔</div>
+          <div class="wf-node" style="background: var(--emerald-50); border: 2px solid var(--emerald-500); color: #065f46;">
+            🟢 4. ENTREGADO<br><span style="font-size: 11px; font-weight: normal;">En manos del destinatario</span>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Estado 1 -->
+          <div class="status-card st-espera">
+            <div>
+              <span class="badge badge-espera">🟡 EN ESPERA</span>
+            </div>
+            <div class="status-name">1. Listo para Recolección</div>
+            <div class="status-desc">
+              El documento fue radicado y embalado en la sede emisora. Está guardado en la recepción en espera de que el mensajero motorizado llegue a retirarlo.
+            </div>
+            <div class="status-resp">📍 Responsable: Recepción de Origen</div>
+          </div>
+
+          <!-- Estado 2 -->
+          <div class="status-card st-transito">
+            <div>
+              <span class="badge badge-transito">🔵 EN TRÁNSITO</span>
+            </div>
+            <div class="status-name">2. En Ruta hacia Destino</div>
+            <div class="status-desc">
+              El mensajero retiró el paquete físico y lo transporta en valija hacia la sede destino. Se registra el nombre del conductor o vehículo.
+            </div>
+            <div class="status-resp">🛵 Responsable: Mensajero / Conductor</div>
+          </div>
+
+          <!-- Estado 3 -->
+          <div class="status-card st-recibido">
+            <div>
+              <span class="badge badge-recibido">🟣 RECIBIDO EN SEDE</span>
+            </div>
+            <div class="status-name">3. Ingreso a Recepción Destino</div>
+            <div class="status-desc">
+              El paquete llegó físicamente a la sede de destino y la recepción lo verificó. El documento está listo para ser entregado a la persona destinataria.
+            </div>
+            <div class="status-resp">🏢 Responsable: Recepción Destino</div>
+          </div>
+
+          <!-- Estado 4 -->
+          <div class="status-card st-entregado">
+            <div>
+              <span class="badge badge-entregado">🟢 ENTREGADO</span>
+            </div>
+            <div class="status-name">4. Entregado al Destinatario Final</div>
+            <div class="status-desc">
+              La persona destinataria final recibió el documento y firmó la constancia. El envío queda formalmente cerrado y archivado con fecha y hora exacta.
+            </div>
+            <div class="status-resp">✍️ Responsable: Destinatario Final (con firma)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. CÓMO CAMBIAR EL ESTADO -->
+      <section id="actualizar">
+        <h2 class="section-title">
+          <span class="section-num">5</span>
+          ¿Cómo Cambiar el Estado de un Envío?
+        </h2>
+
+        <div class="step-box">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Localice el documento</div>
+            <div class="step-desc">
+              En la lista principal de envíos, busque la fila correspondiente al radicado que desea mover o utilice el buscador superior.
+            </div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Abra la ventana de gestión</div>
+            <div class="step-desc">
+              Haga clic sobre el botón de acción <strong>"Actualizar Estado"</strong> o sobre el botón de ver detalle.
+            </div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Seleccione el nuevo estado y detalle</div>
+            <div class="step-desc">
+              Elija el estado siguiente, escriba una nota breve (Ej: <em>"Entregado en recepción a secretaria María"</em>) y, si es entrega final, complete el campo de recibido o firma.
+            </div>
+          </div>
+        </div>
+
+        <div class="step-box">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Guardar movimiento</div>
+            <div class="step-desc">
+              Al guardar, el sistema anexa automáticamente la fecha, la hora exacta y el usuario que realizó la actualización en la <strong>Línea de Tiempo</strong> del documento.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. FILTROS Y REPORTES -->
+      <section id="filtros">
+        <h2 class="section-title">
+          <span class="section-num">6</span>
+          Búsqueda, Filtros y Exportación a Excel
+        </h2>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--slate-900);">🔍 Búsqueda en Tiempo Real</h3>
+            <p style="font-size: 13.5px; color: var(--slate-600); line-height: 1.6;">
+              Escriba cualquier término en la barra superior. Puede buscar por:
+            </p>
+            <ul style="padding-left: 20px; font-size: 13px; color: var(--slate-700); margin-top: 8px; line-height: 1.8;">
+              <li>Número de radicado (Ej: <code>RAD-2026-0001</code> o solo <code>0001</code>).</li>
+              <li>Nombre del remitente o del destinatario.</li>
+              <li>Palabras clave en el asunto del documento.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--slate-900);">📊 Exportar a Excel (CSV)</h3>
+            <p style="font-size: 13.5px; color: var(--slate-600); line-height: 1.6;">
+              Haga clic en el botón <strong>"Descargar Reporte CSV"</strong>. Se descargará un archivo estructurado con formato UTF-8 listo para abrir en Microsoft Excel con todas las columnas: Radicado, Fecha, Origen, Destino, Asunto, Estado y Último Responsable.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. PREGUNTAS FRECUENTES -->
+      <section id="faq">
+        <h2 class="section-title">
+          <span class="section-num">7</span>
+          Preguntas Frecuentes y Solución de Dudas
+        </h2>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>¿Qué pasa si apago o reinicio el computador donde está DocuTrack?</span>
+            <span>➕</span>
+          </div>
+          <div class="faq-answer">
+            No ocurre nada malo. Todos los datos se guardan al instante en el archivo de base de datos local. Cuando vuelva a encender el equipo, simplemente vuelva a hacer doble clic en <strong><code>INICIAR.bat</code></strong> y continuará exactamente donde lo dejó.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>¿Puedo ingresar al sistema desde otro equipo de la empresa?</span>
+            <span>➕</span>
+          </div>
+          <div class="faq-answer">
+            Sí. Si los equipos están conectados a la misma red local o Wi-Fi, abra el navegador en el otro computador y escriba la IP del equipo principal seguida del puerto (Ej: <code>http://192.168.1.50:3000</code>).
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>¿Puedo eliminar un radicado creado por error?</span>
+            <span>➕</span>
+          </div>
+          <div class="faq-answer">
+            Por normas de auditoría y trazabilidad documental, los radicados generados no deben ser borrados. Si un envío fue cancelado, puede registrar una observación en el historial indicando que fue anulado.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>¿Qué significa que el sistema tenga "Cero Dependencias"?</span>
+            <span>➕</span>
+          </div>
+          <div class="faq-answer">
+            Significa que no requiere carpetas gigantescas de librerías externas ni conexión a internet para funcionar. Todo el código corre nativamente con Node.js estándar.
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <strong>DocuTrack Express</strong> • Sistema de Gestión y Trazabilidad Documental Inter-Sedes<br>
+      <span style="font-size: 12px; color: var(--slate-400); margin-top: 4px; display: inline-block;">Documento de uso interno confidencial • Versión 2026</span>
+    </footer>
+  </div>
+
+  <script>
+    // Interactividad sencilla para las preguntas frecuentes (FAQ)
+    document.querySelectorAll('.faq-question').forEach(item => {
+      item.addEventListener('click', () => {
+        const answer = item.nextElementSibling;
+        const icon = item.querySelector('span:last-child');
+        const isOpen = answer.style.display !== 'none';
+        
+        if (isOpen) {
+          answer.style.display = 'none';
+          icon.textContent = '➕';
+        } else {
+          answer.style.display = 'block';
+          icon.textContent = '➖';
+        }
+      });
+    });
+
+    // Iniciar con las preguntas colapsadas excepto la primera
+    document.querySelectorAll('.faq-item').forEach((item, index) => {
+      const answer = item.querySelector('.faq-answer');
+      const icon = item.querySelector('.faq-question span:last-child');
+      if (index !== 0) {
+        answer.style.display = 'none';
+        icon.textContent = '➕';
+      } else {
+        icon.textContent = '➖';
+      }
+    });
+  </script>
+</body>
+</html>
