@@ -1,0 +1,47 @@
+============================================================
+           DOCUTRACK EXPRESS v2.0 PRO - GUIA RAPIDA
+============================================================
+
+Sistema de Control y Custodia de Correspondencia Inter-Sedes
+(Administrativo ⇄ Tesoreria ⇄ Planta)
+
+------------------------------------------------------------
+COMO INICIAR EL SISTEMA:
+------------------------------------------------------------
+1. Asegurate de tener Node.js instalado en el equipo (version 18 o superior).
+   Si no lo tienes, descargalo gratis en: https://nodejs.org/
+
+2. Haz doble clic en el archivo:
+   👉 INICIAR.bat
+
+3. El sistema abrira automaticamente tu navegador web en:
+   http://localhost:3000
+
+------------------------------------------------------------
+COMO INGRESAR (CREDENTIALS):
+------------------------------------------------------------
+En la pantalla de bienvenida puedes ingresar con 1 solo clic
+seleccionando tu perfil:
+
+- Admin Administrativo (Sede Administrativo)
+- Operador Administrativo (Sede Administrativo)
+- Admin Tesoreria (Sede Tesoreria)
+- Operador Tesoreria (Sede Tesoreria)
+- Admin Planta (Sede Planta)
+- Operador Planta (Sede Planta)
+
+Contrasena de demostracion para todos: admin123
+
+------------------------------------------------------------
+CARACTERISTICAS INCLUIDAS:
+------------------------------------------------------------
+- Radicacion de sobres y correspondencia con codigo QR unico.
+- Impresion directa de etiquetas de valija.
+- Cadena de custodia paso a paso (En Espera -> En Transito -> Recibido en Sede -> Entregado).
+- Registro de entrega con firma manuscrita digital en pantalla.
+- Trazabilidad y auditoria con marcas de tiempo.
+- Exportacion oficial a Excel / CSV (con compatibilidad de caracteres).
+- Cero configuraciones de bases de datos complejas (persistencia automatica en JSON).
+
+Desarrollado para control de correspondencia empresarial.
+============================================================
