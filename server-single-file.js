@@ -160,73 +160,9 @@ function inicializarDatosDemo() {
     necesitaGuardar = true;
   }
 
-  if (db.envios.length === 0) {
-    db.envios = [
-      {
-        id: 'demo-1',
-        radicado: 'RAD-2026-0001',
-        origen: 'Administrativo',
-        destino: 'Tesoreria',
-        remitente: 'Contabilidad - Ana María V.',
-        destinatario: 'Tesorería - Carlos R.',
-        tipo: 'Facturas / Cheques',
-        prioridad: 'Alta',
-        asunto: 'Facturas aprobadas para firma de cheque quincenal',
-        estado: 'EN_TRANSITO',
-        creado_en: '2026-10-13T07:30:00',
-        creado_por: 'Admin Administrativo',
-        actualizado_en: '2026-10-13T08:10:00',
-        historial: [
-          { estado: 'EN_ESPERA', fecha: '2026-10-13T07:30:00', responsable: 'Recepción Administrativo (Admin Administrativo)', detalle: 'Documento radicado y embalado en sobre' },
-          { estado: 'EN_TRANSITO', fecha: '2026-10-13T08:10:00', responsable: 'Mensajero: Juan Morales', detalle: 'Retirado de Administrativo. En ruta hacia Tesoreria' }
-        ]
-      },
-      {
-        id: 'demo-2',
-        radicado: 'RAD-2026-0002',
-        origen: 'Tesoreria',
-        destino: 'Administrativo',
-        remitente: 'Recursos Humanos - Sofía T.',
-        destinatario: 'Nómina - Pedro Castro',
-        tipo: 'Contrato / Legal',
-        prioridad: 'Normal',
-        asunto: 'Contratos firmados de nuevos contratistas',
-        estado: 'RECIBIDO_SEDE',
-        creado_en: '2026-10-12T15:20:00',
-        creado_por: 'Admin Tesoreria',
-        actualizado_en: '2026-10-13T07:50:00',
-        historial: [
-          { estado: 'EN_ESPERA', fecha: '2026-10-12T15:20:00', responsable: 'Recepción Tesoreria (Admin Tesoreria)', detalle: 'Radicado generado' },
-          { estado: 'EN_TRANSITO', fecha: '2026-10-13T07:00:00', responsable: 'Mensajero: Juan Morales', detalle: 'Retirado de Tesoreria' },
-          { estado: 'RECIBIDO_SEDE', fecha: '2026-10-13T07:50:00', responsable: 'Recepción Administrativo', detalle: 'Ingresado a Administrativo. Listo para entrega a Nómina' }
-        ]
-      },
-      {
-        id: 'demo-3',
-        radicado: 'RAD-2026-0003',
-        origen: 'Planta',
-        destino: 'Administrativo',
-        remitente: 'Jefe de Planta - Roberto M.',
-        destinatario: 'Auditoría Interna - Laura G.',
-        tipo: 'Valija Confidencial',
-        prioridad: 'Alta',
-        asunto: 'Informe de auditoría técnica confidencial',
-        estado: 'EN_ESPERA',
-        creado_en: '2026-10-13T08:00:00',
-        creado_por: 'Admin Planta',
-        actualizado_en: '2026-10-13T08:00:00',
-        historial: [
-          { estado: 'EN_ESPERA', fecha: '2026-10-13T08:00:00', responsable: 'Recepción Planta (Admin Planta)', detalle: 'Sobre sellado en espera de recolección' }
-        ]
-      }
-    ];
-    db.contador = 4;
-    necesitaGuardar = true;
-  }
-
   if (necesitaGuardar) {
     guardarDB();
-    console.log('✅ Datos de demo inicializados correctamente');
+    console.log('✅ Usuarios del sistema inicializados');
   }
 }
 
