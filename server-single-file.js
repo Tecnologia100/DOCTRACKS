@@ -736,6 +736,17 @@ const server = http.createServer(async (req, res) => {
 cargarDB();
 inicializarDatosDemo();
 
+// Manejo de errores de puerto (ej. si ya está en ejecución)
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`ℹ️ El servidor DocuTrack ya está activo en http://localhost:${PORT}`);
+    process.exit(0);
+  } else {
+    console.error('Error al iniciar el servidor:', err);
+    process.exit(1);
+  }
+});
+
 // Iniciar servidor en el puerto configurado
 server.listen(PORT, () => {
   console.log(`🚀 DocuTrack Express corriendo exitosamente en http://localhost:${PORT}`);
