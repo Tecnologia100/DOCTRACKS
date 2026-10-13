@@ -187,7 +187,7 @@
       "rol": "admin",
       "oficina": "Administrativo",
       "creado_en": "2026-10-01T00:00:00",
-      "token": "e7ca7e1c9c8d273a364bd5e6da57c9c6e5c6ad0208b34605f9969659bb241ae5",
+      "token": "d610350308f1388b0ced194ef145be7e10c30662b8718b1c585dee362f58d276",
       "avatar": "building-shield",
       "icono": "shield"
     },
@@ -200,7 +200,8 @@
       "oficina": "Tesoreria",
       "creado_en": "2026-10-01T00:00:00",
       "avatar": "landmark",
-      "icono": "shield"
+      "icono": "shield",
+      "token": "be68275924d3f33b9baf5446e944f06fbc0c72c92c38ee91d541eabf648b2f6a"
     },
     {
       "id": 3,
@@ -212,39 +213,6 @@
       "creado_en": "2026-10-01T00:00:00",
       "avatar": "factory",
       "icono": "shield"
-    },
-    {
-      "id": 4,
-      "username": "op_a",
-      "password": "pbkdf2:c9631eb09d0b239cc4710157adb449e1:10000:45309cfdf9783b422f2d6d8af98835dbd2c0e08e78f54f59d8be6b1a28fb24bba097084ffd29771636e95a7bbd6e2c9bd1b6e40660689b2765d1949c80c50d20",
-      "nombre": "Operador Administrativo",
-      "rol": "operador",
-      "oficina": "Administrativo",
-      "creado_en": "2026-10-01T00:00:00",
-      "avatar": "building-shield",
-      "icono": "user"
-    },
-    {
-      "id": 5,
-      "username": "op_b",
-      "password": "pbkdf2:0e7661300d40bbc89050602732d90dd9:10000:1991a8855221df9ff90d62cb8ea60267f5c3a5386daf28ab24ec1cf24a74532a9d3166906fefb02ded7684e60d6b2872ee3188e40bf97965e644c58dc4562f7d",
-      "nombre": "Operador Tesoreria",
-      "rol": "operador",
-      "oficina": "Tesoreria",
-      "creado_en": "2026-10-01T00:00:00",
-      "avatar": "landmark",
-      "icono": "user"
-    },
-    {
-      "id": 6,
-      "username": "op_p",
-      "password": "pbkdf2:601fc8603fba7dff497b54fbcc0c3fee:10000:d0b1691e4dd2a710156fdfe80a6ce504fcdbaf6589d0c6cf8fd9e0c0cb477ee8076b7e521530de0c79f343b32113f2a182c227610857379f5c16719abae6ac82",
-      "nombre": "Operador Planta",
-      "rol": "operador",
-      "oficina": "Planta",
-      "creado_en": "2026-10-01T00:00:00",
-      "avatar": "factory",
-      "icono": "user"
     }
   ],
   "contador": 7

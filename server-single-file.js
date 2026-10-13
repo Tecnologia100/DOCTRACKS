@@ -97,6 +97,13 @@ function migrarUsuariosSiEsNecesario() {
     db.usuarios = [];
   }
 
+  // Retirar usuarios operador (solo se mantienen administradores por sede)
+  const totalAntes = db.usuarios.length;
+  db.usuarios = db.usuarios.filter(u => u.rol !== 'operador' && !u.username.startsWith('op_'));
+  if (db.usuarios.length !== totalAntes) {
+    modificado = true;
+  }
+
   for (const u of db.usuarios) {
     // Si la contraseña está en texto plano, migrar a hash
     if (u.password && !u.password.startsWith('pbkdf2:')) {
@@ -108,11 +115,11 @@ function migrarUsuariosSiEsNecesario() {
       if (u.oficina === 'Administrativo') u.avatar = 'building-shield';
       else if (u.oficina === 'Tesoreria') u.avatar = 'landmark';
       else if (u.oficina === 'Planta') u.avatar = 'factory';
-      else u.avatar = u.rol === 'admin' ? 'building-shield' : 'user-check';
+      else u.avatar = 'building-shield';
       modificado = true;
     }
     if (!u.icono) {
-      u.icono = u.rol === 'admin' ? 'shield' : 'user';
+      u.icono = 'shield';
       modificado = true;
     }
   }
@@ -148,10 +155,7 @@ function inicializarDatosDemo() {
     db.usuarios = [
       { id: 1, username: 'admin_a', password: hashPassword('admin123'), nombre: 'Admin Administrativo', rol: 'admin', oficina: 'Administrativo', avatar: 'building-shield', icono: 'shield', creado_en: '2026-10-01T00:00:00' },
       { id: 2, username: 'admin_b', password: hashPassword('admin123'), nombre: 'Admin Tesoreria', rol: 'admin', oficina: 'Tesoreria', avatar: 'landmark', icono: 'shield', creado_en: '2026-10-01T00:00:00' },
-      { id: 3, username: 'admin_p', password: hashPassword('admin123'), nombre: 'Admin Planta', rol: 'admin', oficina: 'Planta', avatar: 'factory', icono: 'shield', creado_en: '2026-10-01T00:00:00' },
-      { id: 4, username: 'op_a', password: hashPassword('admin123'), nombre: 'Operador Administrativo', rol: 'operador', oficina: 'Administrativo', avatar: 'user-check', icono: 'user', creado_en: '2026-10-01T00:00:00' },
-      { id: 5, username: 'op_b', password: hashPassword('admin123'), nombre: 'Operador Tesoreria', rol: 'operador', oficina: 'Tesoreria', avatar: 'coins', icono: 'user', creado_en: '2026-10-01T00:00:00' },
-      { id: 6, username: 'op_p', password: hashPassword('admin123'), nombre: 'Operador Planta', rol: 'operador', oficina: 'Planta', avatar: 'hard-hat', icono: 'user', creado_en: '2026-10-01T00:00:00' }
+      { id: 3, username: 'admin_p', password: hashPassword('admin123'), nombre: 'Admin Planta', rol: 'admin', oficina: 'Planta', avatar: 'factory', icono: 'shield', creado_en: '2026-10-01T00:00:00' }
     ];
     necesitaGuardar = true;
   }

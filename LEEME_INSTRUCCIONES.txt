@@ -18,24 +18,20 @@ COMO INICIAR EL SISTEMA:
    http://localhost:3000
 
 ------------------------------------------------------------
-COMO INGRESAR (CREDENTIALS):
+USUARIOS DISPONIBLES:
 ------------------------------------------------------------
-En la pantalla de bienvenida puedes ingresar con 1 solo clic
-seleccionando tu perfil:
+Ingresa con el usuario correspondiente a tu sede:
 
-- Admin Administrativo (Sede Administrativo)
-- Operador Administrativo (Sede Administrativo)
-- Admin Tesoreria (Sede Tesoreria)
-- Operador Tesoreria (Sede Tesoreria)
-- Admin Planta (Sede Planta)
-- Operador Planta (Sede Planta)
+- Sede Administrativo:  admin_a
+- Sede Tesoreria:       admin_b
+- Sede Planta:          admin_p
 
-Contrasena de demostracion para todos: admin123
+Contrasena para todos:  admin123
 
 ------------------------------------------------------------
 CARACTERISTICAS INCLUIDAS:
 ------------------------------------------------------------
-- Radicacion de sobres y correspondencia con codigo QR unico.
+- Radicacion de correspondencia con codigo QR unico.
 - Impresion directa de etiquetas de valija.
 - Cadena de custodia paso a paso (En Espera -> En Transito -> Recibido en Sede -> Entregado).
 - Registro de entrega con firma manuscrita digital en pantalla.

@@ -8,7 +8,7 @@ Sistema integral de Control de Correspondencia Inter-Sedes con cadena de custodi
 
 - **Gestión de envíos inter-sedes**: Administrativo ⇄ Tesorería ⇄ Planta.
 - **Cadena de custodia en 3 etapas**: En Espera → En Tránsito → Recibido en Destino → Entregado.
-- **Acceso visual por perfiles (1-Clic)**: Selector interactivo organizado por sedes y roles (Admin / Operador) sin necesidad de memorizar nombres técnicos de usuario.
+- **Autenticación por sede**: Cuentas de administración dedicadas para cada sede con contraseñas protegidas.
 - **Seguridad robusta**: Hashing de contraseñas con PBKDF2 (SHA-512) nativo y validación estricta de tokens en todas las operaciones del backend.
 - **Códigos QR de radicación**: Generación dinámica e instantánea de etiquetas listas para imprimir en térmicas o estándar (`@media print`).
 - **Firma digital manuscrita**: Captura en pantalla táctil o con ratón en Canvas HTML5 y almacenamiento directo en Base64.
@@ -34,20 +34,15 @@ Abrir en el navegador web:
 
 ---
 
-## 👥 Perfiles y Modos de Acceso
+## 👥 Cuentas de Acceso
 
-La aplicación incluye un **Selector Visual de Perfiles** donde puedes ingresar con **1 solo clic**:
+El sistema cuenta con un administrador dedicado para cada sede:
 
-| Sede | Perfil | Rol | Función Principal |
-|------|--------|-----|-------------------|
-| **Administrativo** | Admin Administrativo | Admin | Gestión integral y auditoría de correspondencia |
-| **Administrativo** | Operador Administrativo | Operador | Ventanilla de radicación y recepción |
-| **Tesorería** | Admin Tesorería | Admin | Auditoría y control de valijas financieras |
-| **Tesorería** | Operador Tesorería | Operador | Ventanilla de recepción y entrega de cheques |
-| **Planta** | Admin Planta | Admin | Control de envíos y valijas técnicas |
-| **Planta** | Operador Planta | Operador | Ventanilla de despacho y recepción en planta |
-
-> **Ingreso manual alternativo:** Puedes usar la pestaña *Ingreso Manual* con los usuarios (`admin_a`, `admin_b`, `admin_p`, `op_a`, `op_b`, `op_p`) y la contraseña demo: `admin123`.
+| Sede | Usuario | Contraseña | Rol | Función Principal |
+|------|---------|------------|-----|-------------------|
+| **Administrativo** | `admin_a` | `admin123` | Admin | Gestión integral y control desde sede central |
+| **Tesorería** | `admin_b` | `admin123` | Admin | Control y custodia de valijas financieras |
+| **Planta** | `admin_p` | `admin123` | Admin | Control y despacho de correspondencia técnica |
 
 ---
 
