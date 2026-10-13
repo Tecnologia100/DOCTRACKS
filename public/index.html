@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de control de correspondencia inter-sedes con cadena de custodia, códigos QR y firma digital">
+  <title>DocuTrack Express - Control de Correspondencia Inter-Sedes</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- QRCode.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printable-ticket, #printable-ticket * { visibility: visible; }
+      #printable-ticket {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 24px;
+        box-shadow: none;
+        border: 2px solid #0f172a;
+        background: #ffffff;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
+
+  <!-- BARRA SUPERIOR DE NAVEGACIÓN -->
+  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <!-- Logo y Título -->
+      <div class="flex items-center space-x-3 min-w-0">
+        <div class="bg-indigo-600 p-2 rounded-xl text-white shadow-sm shrink-0">
+          <i data-lucide="package-check" class="w-6 h-6"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center space-x-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight truncate">DocuTrack Express</h1>
+            <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800">v2.0 Pro</span>
+          </div>
+          <p class="text-[11px] sm:text-xs text-slate-400 truncate">Custodia Inter-Sedes: Administrativo ⇄ Tesorería ⇄ Planta</p>
+        </div>
+      </div>
+
+      <!-- Zona de Usuario y Acciones -->
+      <div class="flex items-center space-x-2 sm:space-x-3 text-xs shrink-0" id="user-header-zone" style="display: none;">
+        <!-- Indicador de perfil activo -->
+        <div id="user-badge" class="flex items-center space-x-2 px-3 py-1.5 bg-slate-800/90 rounded-xl border border-slate-700/80 shadow-sm">
+          <div id="user-avatar-icon" class="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs bg-indigo-600 text-white shadow-inner">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i>
+          </div>
+          <div class="hidden sm:block text-left leading-tight">
+            <p id="user-nombre-display" class="font-semibold text-slate-100 max-w-[130px] md:max-w-[180px] truncate"></p>
+            <p id="user-sede-display" class="text-[10px] text-slate-400"></p>
+          </div>
+          <span id="user-rol-tag" class="text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800"></span>
+        </div>
+
+        <!-- Botón Cambiar Perfil -->
+        <button onclick="abrirSelectorUsuarios()" class="text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg transition text-xs border border-slate-700 hover:bg-slate-800 flex items-center space-x-1.5" title="Cambiar de usuario">
+          <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-400"></i>
+          <span class="hidden md:inline">Cambiar Usuario</span>
+        </button>
+
+        <!-- Botón Salir -->
+        <button onclick="logout()" class="text-rose-300 hover:text-rose-100 px-2.5 py-1.5 rounded-lg transition text-xs border border-rose-900/60 hover:bg-rose-950/50 flex items-center space-x-1" title="Cerrar sesión">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span class="hidden md:inline">Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MODAL DE ACCESO / PORTAL DE USUARIOS -->
+  <div id="modal-login" class="fixed inset-0 bg-slate-950/75 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden my-6">
+      
+      <!-- Encabezado del Modal -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 px-6 sm:px-8 py-6 text-white text-center relative">
+        <div class="inline-flex p-3 rounded-2xl bg-indigo-600/30 border border-indigo-400/30 text-indigo-300 mb-3 shadow-lg">
+          <i data-lucide="shield-check" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-xl sm:text-2xl font-black tracking-tight text-white">DocuTrack Express</h2>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-md mx-auto">Control de Correspondencia Inter-Sedes y Cadena de Custodia</p>
+        <div class="mt-4 inline-flex items-center space-x-2 bg-indigo-500/20 px-3 py-1 rounded-full text-indigo-200 text-xs border border-indigo-500/30">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Selecciona tu perfil de sede para ingresar</span>
+        </div>
+      </div>
+
+      <!-- Selector de Modo de Ingreso -->
+      <div class="p-6 sm:p-8 space-y-6">
+        
+        <!-- Pestañas: 1-Clic vs Credenciales -->
+        <div class="flex border-b border-slate-200 pb-2 justify-between items-center">
+          <div class="flex space-x-4">
+            <button id="btn-tab-quick" onclick="mostrarPestanaLogin('quick')" class="text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 pb-2 flex items-center space-x-1.5">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Acceso Rápido por Perfil</span>
+            </button>
+            <button id="btn-tab-manual" onclick="mostrarPestanaLogin('manual')" class="text-sm font-medium text-slate-500 hover:text-slate-800 pb-2 flex items-center space-x-1.5">
+              <i data-lucide="key-round" class="w-4 h-4"></i>
+              <span>Ingreso Manual</span>
+            </button>
+          </div>
+          <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">6 Perfiles configurados</span>
+        </div>
+
+        <!-- CONTENIDO PESTAÑA 1: ACCESO RÁPIDO POR TARJETAS -->
+        <div id="tab-login-quick" class="space-y-4">
+          <p class="text-xs text-slate-500">Haz clic en tu usuario según tu sede para entrar de inmediato:</p>
+
+          <!-- Grid de Usuarios agrupados por sede -->
+          <div id="contenedor-perfiles" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <!-- Se puebla dinámicamente desde /api/auth/perfiles -->
+            <div class="col-span-full py-8 text-center text-slate-400 text-sm">
+              <div class="animate-spin inline-block w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full mb-2"></div>
+              <p>Cargando perfiles disponibles...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTENIDO PESTAÑA 2: INGRESO MANUAL CON CONTRASEÑA -->
+        <div id="tab-login-manual" class="hidden space-y-4 max-w-md mx-auto">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nombre de Usuario</label>
+            <div class="relative">
+              <i data-lucide="user" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+              <input type="text" id="login-username" placeholder="Ej: admin_a, op_b, admin_p" class="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" autocomplete="username">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
+            <div class="relative">
+              <i data-lucide="lock" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+              <input type="password" id="login-password" placeholder="Ingrese su contraseña" class="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" autocomplete="current-password" onkeypress="if(event.key==='Enter') loginManual()">
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">Contraseña de demostración: <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-700 font-mono">admin123</code></p>
+          </div>
+          <button onclick="loginManual()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-200 flex items-center justify-center space-x-2 transition">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+            <span>Iniciar Sesión</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Pie del modal -->
+      <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+        <span>Sistema de Correspondencia y Cadena de Custodia</span>
+        <span class="flex items-center space-x-1"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-500"></i><span>Servidor Online</span></span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6 hidden">
+
+    <!-- RESUMEN DE INDICADORES (KPIs) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3 hover:shadow-md transition">
+        <div class="min-w-0 flex-1">
+          <p class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">En Espera</p>
+          <p id="kpi-espera" class="text-2xl sm:text-3xl font-black text-amber-600 mt-1">0</p>
+          <span class="text-[11px] text-slate-400">Por recolección</span>
+        </div>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 bg-amber-50 rounded-2xl text-amber-600 flex items-center justify-center shrink-0 border border-amber-100 shadow-inner">
+          <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3 hover:shadow-md transition">
+        <div class="min-w-0 flex-1">
+          <p class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">En Tránsito</p>
+          <p id="kpi-transito" class="text-2xl sm:text-3xl font-black text-blue-600 mt-1">0</p>
+          <span class="text-[11px] text-slate-400">En ruta inter-sedes</span>
+        </div>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 bg-blue-50 rounded-2xl text-blue-600 flex items-center justify-center shrink-0 border border-blue-100 shadow-inner">
+          <i data-lucide="truck" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3 hover:shadow-md transition">
+        <div class="min-w-0 flex-1">
+          <p class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">En Sede Destino</p>
+          <p id="kpi-recibido" class="text-2xl sm:text-3xl font-black text-purple-600 mt-1">0</p>
+          <span class="text-[11px] text-slate-400">Listo para entrega</span>
+        </div>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 bg-purple-50 rounded-2xl text-purple-600 flex items-center justify-center shrink-0 border border-purple-100 shadow-inner">
+          <i data-lucide="building-2" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3 hover:shadow-md transition">
+        <div class="min-w-0 flex-1">
+          <p class="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">Entregados</p>
+          <p id="kpi-entregado" class="text-2xl sm:text-3xl font-black text-emerald-600 mt-1">0</p>
+          <span class="text-[11px] text-slate-400">Con firma digital</span>
+        </div>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 bg-emerald-50 rounded-2xl text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100 shadow-inner">
+          <i data-lucide="check-circle-2" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- PESTAÑAS DE VISTA -->
+    <div class="border-b border-slate-200 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+      <div class="flex space-x-4 sm:space-x-8 min-w-max">
+        <button id="tab-btn-envios" onclick="cambiarVista('envios')" class="pb-3 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 flex items-center space-x-2 whitespace-nowrap">
+          <i data-lucide="list" class="w-4 h-4"></i>
+          <span>Listado de Envíos</span>
+        </button>
+        <button id="tab-btn-radicar" onclick="cambiarVista('radicar')" class="pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 whitespace-nowrap">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Radicar Envío</span>
+        </button>
+        <button id="tab-btn-control" onclick="cambiarVista('control')" class="pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 whitespace-nowrap">
+          <i data-lucide="scan-line" class="w-4 h-4"></i>
+          <span>Punto de Control</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- VISTA 1: LISTADO DE ENVÍOS -->
+    <section id="vista-envios" class="space-y-4">
+      <!-- Barra de Filtros y Exportación -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
+        
+        <!-- Input de búsqueda -->
+        <div class="relative w-full md:w-80">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+          <input type="text" id="filtro-buscar" oninput="renderizarTabla()" placeholder="Buscar radicado, personas o asunto..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+
+        <!-- Filtros y botón exportar -->
+        <div class="flex flex-wrap gap-2 w-full md:w-auto items-center">
+          <select id="filtro-estado" onchange="renderizarTabla()" aria-label="Filtrar por estado" class="border border-slate-300 rounded-xl text-xs sm:text-sm px-3 py-2 bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500">
+            <option value="todos">Todos los Estados</option>
+            <option value="EN_ESPERA">En Espera de Recolección</option>
+            <option value="EN_TRANSITO">En Tránsito</option>
+            <option value="RECIBIDO_SEDE">Recibido en Sede</option>
+            <option value="ENTREGADO">Entregado</option>
+          </select>
+          
+          <select id="filtro-ruta" onchange="renderizarTabla()" aria-label="Filtrar por ruta" class="border border-slate-300 rounded-xl text-xs sm:text-sm px-3 py-2 bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500">
+            <option value="todas">Todas las Rutas</option>
+            <option value="Administrativo_Tesoreria">Administrativo → Tesoreria</option>
+            <option value="Tesoreria_Administrativo">Tesoreria → Administrativo</option>
+            <option value="Administrativo_Planta">Administrativo → Planta</option>
+            <option value="Planta_Administrativo">Planta → Administrativo</option>
+            <option value="Tesoreria_Planta">Tesoreria → Planta</option>
+            <option value="Planta_Tesoreria">Planta → Tesoreria</option>
+          </select>
+
+          <!-- Botón de Exportar a CSV / Excel -->
+          <button onclick="exportarCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-sm flex items-center space-x-1.5 transition" title="Descargar reporte oficial en formato Excel / CSV">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+            <span>Exportar CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla de Envíos -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-slate-700 uppercase font-bold text-[11px] border-b border-slate-200 tracking-wider">
+              <tr>
+                <th class="px-4 py-3.5">Radicado / Fecha</th>
+                <th class="px-4 py-3.5">Ruta</th>
+                <th class="px-4 py-3.5">Asunto / Tipo</th>
+                <th class="px-4 py-3.5">Remitente / Destinatario</th>
+                <th class="px-4 py-3.5">Estado Actual</th>
+                <th class="px-4 py-3.5 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-envios" class="divide-y divide-slate-100">
+              <!-- Se puebla dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 2: RADICAR NUEVO ENVÍO -->
+    <section id="vista-radicar" class="hidden max-w-3xl mx-auto">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+        
+        <div class="border-b border-slate-100 pb-4">
+          <div class="flex items-center space-x-2">
+            <div class="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+              <i data-lucide="file-plus" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Radicación y Etiquetado de Correspondencia</h2>
+              <p class="text-xs text-slate-500">Cree un nuevo envío con código QR único para garantizar la cadena de custodia.</p>
+            </div>
+          </div>
+        </div>
+
+        <form id="form-nuevo-envio" onsubmit="crearEnvio(event)" class="space-y-5">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Sede de Origen</label>
+              <select id="rad-origen" required onchange="ajustarDestino()" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 font-medium">
+                <option value="">-- Seleccionar --</option>
+                <option value="Administrativo">Administrativo</option>
+                <option value="Tesoreria">Tesoreria</option>
+                <option value="Planta">Planta</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Sede de Destino</label>
+              <select id="rad-destino" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 font-medium">
+                <option value="">-- Seleccione primero el origen --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Remitente (Quién envía)</label>
+              <input type="text" id="rad-remitente" required placeholder="Ej: Contabilidad - María Gómez" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500" maxlength="100">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Destinatario Final</label>
+              <input type="text" id="rad-destinatario" required placeholder="Ej: Gerencia - Carlos Duque" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500" maxlength="100">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipo de Documento</label>
+              <select id="rad-tipo" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500">
+                <option value="Contrato / Legal">Contrato / Documento Legal</option>
+                <option value="Facturas / Cheques">Facturas / Títulos Valores</option>
+                <option value="Correspondencia General">Correspondencia General</option>
+                <option value="Valija Confidencial">Valija Confidencial</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Prioridad</label>
+              <select id="rad-prioridad" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500">
+                <option value="Normal">Normal (Entrega en el día)</option>
+                <option value="Alta">Alta (Urgente / Mismo turno)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descripción / Asunto del Sobre</label>
+            <div class="relative">
+              <textarea id="rad-asunto" required rows="2" placeholder="Describa brevemente el contenido o número de folios..." class="w-full border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500" maxlength="200" oninput="actualizarContadorCaracteres(), validarLongitudCampo(this)"></textarea>
+              <span id="contador-caracteres" class="absolute top-2 right-3 text-[10px] text-slate-400 bg-white px-1.5 py-0.5 rounded">0/200</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-3 pt-3 border-t border-slate-100">
+            <button type="button" onclick="cambiarVista('envios')" class="px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition">Cancelar</button>
+            <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-200 flex items-center space-x-2 transition">
+              <i data-lucide="printer" class="w-4 h-4"></i>
+              <span>Radicar e Imprimir Etiqueta</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- VISTA 3: PUNTO DE CONTROL OPERATIVO / ESCANEO -->
+    <section id="vista-control" class="hidden max-w-3xl mx-auto space-y-6">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+        
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+            <div class="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+              <i data-lucide="scan-barcode" class="w-5 h-5"></i>
+            </div>
+            <span>Punto de Control y Cadena de Custodia</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-1">Escanee o ingrese el radicado del sobre para avanzar su estado de entrega en tiempo real.</p>
+        </div>
+
+        <!-- Buscador de radicado -->
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+          <label class="block text-xs font-bold text-slate-700 uppercase">Radicado o Código QR</label>
+          <div class="flex gap-2">
+            <input type="text" id="scan-input" placeholder="Ej: RAD-2026-0001" class="flex-1 border border-slate-300 rounded-xl px-4 py-2.5 text-sm uppercase tracking-wider font-mono font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <button onclick="buscarPorRadicado()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold flex items-center space-x-1.5 transition">
+              <i data-lucide="search" class="w-4 h-4"></i>
+              <span>Cargar</span>
+            </button>
+          </div>
+
+          <!-- Sugerencias rápidas de radicados -->
+          <div class="pt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+            <span class="text-[11px] font-semibold text-slate-400">Accesos rápidos:</span>
+            <div id="accesos-rapidos-radicados" class="flex flex-wrap gap-1">
+              <!-- Renderizado dinámicamente con los últimos radicados -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA DE ACCIÓN DE CUSTODIA (Se muestra al cargar un radicado) -->
+        <div id="panel-accion-custodia" class="hidden border border-indigo-100 bg-indigo-50/40 rounded-2xl p-5 sm:p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start gap-2">
+            <div>
+              <span id="custodia-radicado" class="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-indigo-100 text-indigo-800 border border-indigo-200"></span>
+              <h3 id="custodia-asunto" class="text-base font-bold text-slate-900 mt-2"></h3>
+              <p id="custodia-ruta" class="text-xs text-slate-500 mt-0.5"></p>
+            </div>
+            <div id="custodia-badge-estado"></div>
+          </div>
+
+          <div class="bg-white p-4 rounded-xl border border-slate-200 text-xs grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 shadow-sm">
+            <div><strong class="text-slate-800">Remitente:</strong> <span id="custodia-remitente"></span></div>
+            <div><strong class="text-slate-800">Destinatario:</strong> <span id="custodia-destinatario"></span></div>
+            <div><strong class="text-slate-800">Último Responsable:</strong> <span id="custodia-ultimo-resp"></span></div>
+            <div><strong class="text-slate-800">Última Actualización:</strong> <span id="custodia-ultimo-time"></span></div>
+          </div>
+
+          <!-- BOTONES DE ACCIÓN SEGÚN EL ESTADO -->
+          <div id="acciones-disponibles" class="space-y-3 pt-2">
+            <!-- Renderizado dinámicamente -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: HISTORIAL / TIMELINE DE AUDITORÍA -->
+  <div id="modal-trazabilidad" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-100">
+      
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div>
+          <h3 class="font-bold text-slate-900 text-base" id="modal-traza-radicado">Trazabilidad de Custodia</h3>
+          <p class="text-xs text-slate-500" id="modal-traza-asunto"></p>
+        </div>
+        <button onclick="cerrarModal('modal-trazabilidad')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-6 flex-1">
+        <ol id="timeline-eventos" class="relative border-l border-indigo-200 ml-4 space-y-6">
+          <!-- Eventos dinámicos -->
+        </ol>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-100 text-right">
+        <button onclick="cerrarModal('modal-trazabilidad')" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-semibold transition">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ETIQUETA IMPRIMIBLE CON QR -->
+  <div id="modal-etiqueta" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-100">
+      
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between no-print">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center space-x-2">
+          <i data-lucide="printer" class="w-4 h-4 text-indigo-600"></i>
+          <span>Guía Oficial de Radicación</span>
+        </h3>
+        <button onclick="cerrarModal('modal-etiqueta')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- TICKET IMPRIMIBLE -->
+      <div class="p-6" id="printable-ticket">
+        <div class="border-2 border-dashed border-slate-800 rounded-2xl p-5 bg-white text-center space-y-3">
+          <div class="border-b-2 border-slate-800 pb-2">
+            <h4 class="font-black text-lg tracking-tight text-slate-900 uppercase">DOCUTRACK EXPRESS</h4>
+            <p class="text-[11px] text-slate-600 font-semibold uppercase tracking-wider">Control de Valija Inter-Sedes</p>
+            <p id="label-radicado" class="text-base font-mono font-black text-indigo-800 mt-1"></p>
+          </div>
+
+          <div class="flex justify-center py-2" id="label-qrcode"></div>
+
+          <div class="text-left text-xs space-y-2 border-t-2 border-slate-800 pt-3">
+            <div class="flex justify-between items-center bg-slate-100 p-1.5 rounded font-mono">
+              <span class="text-slate-500 font-bold uppercase">Ruta:</span>
+              <span id="label-ruta" class="font-black text-slate-900"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Remitente:</span>
+              <span id="label-remitente" class="text-slate-900 font-medium"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Destinatario:</span>
+              <span id="label-destinatario" class="font-bold text-slate-900"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500 font-semibold">Tipo / Prioridad:</span>
+              <span id="label-tipo" class="text-slate-800 font-medium"></span>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-500 border-t border-slate-200 pt-1.5">
+              <span>Fecha Radicado:</span>
+              <span id="label-fecha" class="font-mono"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-2 no-print">
+        <button onclick="cerrarModal('modal-etiqueta')" class="px-4 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">Cerrar</button>
+        <button onclick="window.print()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Imprimir Etiqueta</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: FIRMA DIGITAL DE ENTREGA FINAL -->
+  <div id="modal-firma" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden p-6 space-y-4 border border-slate-100">
+      
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base flex items-center space-x-2">
+          <i data-lucide="pen-tool" class="w-4 h-4 text-emerald-600"></i>
+          <span>Constancia de Entrega y Firma</span>
+        </h3>
+        <button onclick="cerrarModal('modal-firma')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nombre de quien recibe físicamente</label>
+        <input type="text" id="firma-nombre" placeholder="Nombre completo y documento/cargo" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label class="text-xs font-bold text-slate-700 uppercase">Firma en pantalla (Táctil o Ratón)</label>
+          <button type="button" onclick="limpiarCanvas()" class="text-xs text-rose-600 hover:underline font-semibold flex items-center space-x-1">
+            <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+            <span>Limpiar</span>
+          </button>
+        </div>
+        <div class="border-2 border-slate-300 rounded-2xl bg-slate-50 overflow-hidden shadow-inner">
+          <canvas id="signature-pad" width="380" height="150" class="w-full cursor-crosshair touch-none bg-white"></canvas>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+        <button onclick="cerrarModal('modal-firma')" class="px-4 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50">Cancelar</button>
+        <button onclick="confirmarEntregaConFirma()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-200 flex items-center space-x-1.5 transition">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Confirmar Recepción Final</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICACIONES TOAST -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[200] space-y-2 pointer-events-none"></div>
+
+  <!-- JAVASCRIPT PRINCIPAL -->
+  <script>
+    // CONFIGURACIÓN API
+    const API_BASE = '/api';
+    let token = localStorage.getItem('docutrack_token') || null;
+    let usuario = JSON.parse(localStorage.getItem('docutrack_user') || 'null');
+    let envios = [];
+    let perfilesDisponibles = [];
+    let envioSeleccionadoParaFirma = null;
+
+    // ESTADOS DE LA MÁQUINA DE CUSTODIA
+    const ESTADOS = {
+      EN_ESPERA: { label: 'En Espera Recolección', color: 'bg-amber-100 text-amber-800 border-amber-200', icon: 'clock' },
+      EN_TRANSITO: { label: 'En Tránsito (Mensajero)', color: 'bg-blue-100 text-blue-800 border-blue-200', icon: 'truck' },
+      RECIBIDO_SEDE: { label: 'Recibido en Sede Destino', color: 'bg-purple-100 text-purple-800 border-purple-200', icon: 'building-2' },
+      ENTREGADO: { label: 'Entregado al Destinatario', color: 'bg-emerald-100 text-emerald-800 border-emerald-200', icon: 'check-circle-2' }
+    };
+
+    const SEDES = ['Administrativo', 'Tesoreria', 'Planta'];
+
+    // ============== INICIALIZACIÓN ==============
+    document.addEventListener('DOMContentLoaded', async () => {
+      iniciarCanvasFirma();
+      lucide.createIcons();
+
+      // Cargar lista de perfiles para el selector
+      await cargarPerfilesLogin();
+
+      if (token && usuario) {
+        configurarSesionActiva();
+        await refrescarVista();
+      } else {
+        abrirSelectorUsuarios();
+      }
+
+      // Atajos de teclado
+      document.getElementById('filtro-buscar')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') renderizarTabla();
+      });
+
+      document.getElementById('scan-input')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') buscarPorRadicado();
+      });
+    });
+
+    // ============== PERFILES Y SELECTOR DE USUARIO ==============
+    async function cargarPerfilesLogin() {
+      try {
+        const res = await fetch(`${API_BASE}/auth/perfiles`);
+        if (res.ok) {
+          perfilesDisponibles = await res.json();
+          renderizarPerfilesEnModal();
+        }
+      } catch (e) {
+        console.error('Error cargando perfiles:', e);
+      }
+    }
+
+    function renderizarPerfilesEnModal() {
+      const contenedor = document.getElementById('contenedor-perfiles');
+      if (!contenedor) return;
+
+      if (!perfilesDisponibles || perfilesDisponibles.length === 0) {
+        contenedor.innerHTML = '<p class="col-span-full text-center text-xs text-slate-400">No se pudieron cargar los perfiles</p>';
+        return;
+      }
+
+      const coloresPorSede = {
+        'Administrativo': { badge: 'bg-indigo-100 text-indigo-700 border-indigo-200', iconBg: 'bg-indigo-600', icon: 'building-2' },
+        'Tesoreria': { badge: 'bg-emerald-100 text-emerald-700 border-emerald-200', iconBg: 'bg-emerald-600', icon: 'landmark' },
+        'Planta': { badge: 'bg-amber-100 text-amber-800 border-amber-200', iconBg: 'bg-amber-600', icon: 'factory' }
+      };
+
+      contenedor.innerHTML = perfilesDisponibles.map(p => {
+        const est = coloresPorSede[p.oficina] || { badge: 'bg-slate-100 text-slate-700', iconBg: 'bg-slate-700', icon: 'user' };
+        const esAdmin = p.rol === 'admin';
+        return `
+          <div onclick="loginRapido('${p.username}')" class="group bg-slate-50 hover:bg-white p-3.5 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition cursor-pointer flex flex-col justify-between space-y-3 relative overflow-hidden">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl ${est.iconBg} text-white flex items-center justify-center font-bold shadow-sm shrink-0">
+                <i data-lucide="${est.icon}" class="w-5 h-5"></i>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center space-x-1.5">
+                  <h4 class="font-bold text-slate-900 text-xs truncate group-hover:text-indigo-600 transition">${p.nombre}</h4>
+                </div>
+                <div class="flex items-center space-x-1.5 mt-0.5">
+                  <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border ${est.badge}">${p.oficina}</span>
+                  <span class="text-[10px] font-bold uppercase text-slate-400">${esAdmin ? 'Admin' : 'Operador'}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs text-indigo-600 font-bold group-hover:translate-x-0.5 transition">
+              <span>Ingresar como ${p.rol === 'admin' ? 'Administrador' : 'Operador'}</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function mostrarPestanaLogin(pestana) {
+      const tabQuick = document.getElementById('tab-login-quick');
+      const tabManual = document.getElementById('tab-login-manual');
+      const btnQuick = document.getElementById('btn-tab-quick');
+      const btnManual = document.getElementById('btn-tab-manual');
+
+      if (pestana === 'quick') {
+        tabQuick.classList.remove('hidden');
+        tabManual.classList.add('hidden');
+        btnQuick.className = 'text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 pb-2 flex items-center space-x-1.5';
+        btnManual.className = 'text-sm font-medium text-slate-500 hover:text-slate-800 pb-2 flex items-center space-x-1.5';
+      } else {
+        tabQuick.classList.add('hidden');
+        tabManual.classList.remove('hidden');
+        btnManual.className = 'text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 pb-2 flex items-center space-x-1.5';
+        btnQuick.className = 'text-sm font-medium text-slate-500 hover:text-slate-800 pb-2 flex items-center space-x-1.5';
+      }
+      lucide.createIcons();
+    }
+
+    function abrirSelectorUsuarios() {
+      document.getElementById('modal-login').classList.remove('hidden');
+      mostrarPestanaLogin('quick');
+    }
+
+    // ============== AUTENTICACIÓN ==============
+    async function loginRapido(username) {
+      await ejecutarLogin(username, 'admin123');
+    }
+
+    async function loginManual() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      if (!username || !password) {
+        mostrarToast('Ingrese usuario y contraseña', 'error');
+        return;
+      }
+      await ejecutarLogin(username, password);
+    }
+
+    async function ejecutarLogin(username, password) {
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          mostrarToast(err.error || 'Credenciales inválidas', 'error');
+          return;
+        }
+
+        const data = await res.json();
+        token = data.token;
+        usuario = data.user;
+        localStorage.setItem('docutrack_token', token);
+        localStorage.setItem('docutrack_user', JSON.stringify(usuario));
+
+        document.getElementById('modal-login').classList.add('hidden');
+        configurarSesionActiva();
+        await refrescarVista();
+        mostrarToast(`¡Bienvenido, ${usuario.nombre}! (${usuario.oficina})`, 'success');
+      } catch (err) {
+        console.error('Error de login:', err);
+        mostrarToast('Error de conexión con el servidor', 'error');
+      }
+    }
+
+    function configurarSesionActiva() {
+      document.getElementById('user-header-zone').style.display = 'flex';
+      const mainEl = document.getElementById('main-content');
+      if (mainEl) {
+        mainEl.classList.remove('hidden');
+        mainEl.style.display = 'block';
+      }
+      document.getElementById('modal-login').classList.add('hidden');
+
+      if (usuario) {
+        document.getElementById('user-nombre-display').textContent = usuario.nombre;
+        document.getElementById('user-sede-display').textContent = `Sede: ${usuario.oficina}`;
+        document.getElementById('user-rol-tag').textContent = usuario.rol;
+      }
+      lucide.createIcons();
+    }
+
+    function logout() {
+      if (confirm('¿Deseas cerrar sesión en DocuTrack?')) {
+        token = null;
+        usuario = null;
+        localStorage.removeItem('docutrack_token');
+        localStorage.removeItem('docutrack_user');
+        document.getElementById('user-header-zone').style.display = 'none';
+        const mainEl = document.getElementById('main-content');
+        if (mainEl) {
+          mainEl.classList.add('hidden');
+          mainEl.style.display = 'none';
+        }
+        abrirSelectorUsuarios();
+      }
+    }
+
+    // ============== API HELPERS ==============
+    async function api(endpoint, options = {}) {
+      const headers = { 'Content-Type': 'application/json', ...options.headers };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const response = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+      
+      if (response.status === 401) {
+        mostrarToast('Tu sesión ha expirado. Por favor ingresa nuevamente.', 'error');
+        logout();
+        return;
+      }
+      
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: 'Error en la solicitud' }));
+        throw err;
+      }
+      
+      return response.json();
+    }
+
+    // ============== EXPORTAR A CSV ==============
+    function exportarCSV() {
+      if (!token) {
+        mostrarToast('Inicie sesión para exportar reportes', 'error');
+        return;
+      }
+      const fecha = new Date().toISOString().slice(0, 10);
+      const url = `${API_BASE}/export/csv?token=${encodeURIComponent(token)}`;
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `DocuTrack_Correspondencia_${fecha}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      mostrarToast('Generando reporte CSV de correspondencia...', 'success');
+    }
+
+    // ============== TOASTS NOTIFICACIONES ==============
+    function mostrarToast(mensaje, tipo = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `px-4 py-3 rounded-xl shadow-xl text-xs sm:text-sm font-semibold flex items-center space-x-2 pointer-events-auto transform transition-all duration-300 translate-y-2 ${
+        tipo === 'error' ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'
+      }`;
+      
+      const icon = tipo === 'error' ? 'alert-circle' : 'check-circle-2';
+      toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${mensaje}</span>`;
+      
+      container.appendChild(toast);
+      lucide.createIcons();
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 3500);
+    }
+
+    // ============== DATOS Y VISTA ==============
+    async function cargarDatos() {
+      try {
+        envios = await api('/envios');
+        return true;
+      } catch (err) {
+        console.error('Error al cargar envíos:', err);
+        return false;
+      }
+    }
+
+    async function refrescarVista() {
+      await cargarDatos();
+      renderizarTabla();
+      actualizarKPIs();
+      actualizarAccesosRapidosRadicados();
+      lucide.createIcons();
+    }
+
+    function actualizarAccesosRapidosRadicados() {
+      const container = document.getElementById('accesos-rapidos-radicados');
+      if (!container) return;
+      if (!envios || envios.length === 0) {
+        container.innerHTML = '<span class="text-slate-400">Ningún radicado activo</span>';
+        return;
+      }
+      const ultimos = envios.slice(0, 4);
+      container.innerHTML = ultimos.map(e => `
+        <button onclick="cargarEnPuntoControl('${e.radicado}')" class="px-2 py-0.5 rounded bg-white hover:bg-indigo-50 border border-slate-200 text-indigo-700 font-mono text-[11px] font-bold transition">
+          ${e.radicado}
+        </button>
+      `).join('');
+    }
+
+    // ============== CAMBIO DE VISTAS ==============
+    function cambiarVista(vista) {
+      const vistas = ['envios', 'radicar', 'control'];
+      vistas.forEach(v => {
+        document.getElementById(`vista-${v}`).classList.add('hidden');
+        const btn = document.getElementById(`tab-btn-${v}`);
+        btn.classList.remove('border-indigo-600', 'text-indigo-600', 'font-bold');
+        btn.classList.add('border-transparent', 'text-slate-500', 'font-medium');
+      });
+
+      document.getElementById(`vista-${vista}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-btn-${vista}`);
+      activeBtn.classList.add('border-indigo-600', 'text-indigo-600', 'font-bold');
+      activeBtn.classList.remove('border-transparent', 'text-slate-500');
+
+      // Pre-selección inteligente al radicar según la sede del usuario
+      if (vista === 'radicar' && usuario) {
+        const origenSelect = document.getElementById('rad-origen');
+        if (origenSelect && (!origenSelect.value || origenSelect.value === '')) {
+          origenSelect.value = usuario.oficina;
+          ajustarDestino();
+        }
+        const remitenteInput = document.getElementById('rad-remitente');
+        if (remitenteInput && !remitenteInput.value) {
+          remitenteInput.value = `${usuario.nombre} (${usuario.oficina})`;
+        }
+      }
+
+      lucide.createIcons();
+    }
+
+    function ajustarDestino() {
+      const origen = document.getElementById('rad-origen').value;
+      const selectDestino = document.getElementById('rad-destino');
+      
+      if (!origen) {
+        selectDestino.innerHTML = '<option value="">-- Seleccione primero el origen --</option>';
+        return;
+      }
+
+      const opciones = SEDES.filter(s => s !== origen);
+      selectDestino.innerHTML = '<option value="">-- Seleccionar --</option>' +
+        opciones.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    // ============== KPIs ==============
+    function actualizarKPIs() {
+      const cEspera = envios.filter(e => e.estado === 'EN_ESPERA').length;
+      const cTransito = envios.filter(e => e.estado === 'EN_TRANSITO').length;
+      const cRecibido = envios.filter(e => e.estado === 'RECIBIDO_SEDE').length;
+      const cEntregado = envios.filter(e => e.estado === 'ENTREGADO').length;
+
+      document.getElementById('kpi-espera').textContent = cEspera;
+      document.getElementById('kpi-transito').textContent = cTransito;
+      document.getElementById('kpi-recibido').textContent = cRecibido;
+      document.getElementById('kpi-entregado').textContent = cEntregado;
+    }
+
+    // ============== TABLA PRINCIPAL ==============
+    function renderizarTabla() {
+      const busqueda = (document.getElementById('filtro-buscar')?.value || '').toLowerCase().trim();
+      const estadoFiltro = document.getElementById('filtro-estado')?.value || 'todos';
+      const rutaFiltro = document.getElementById('filtro-ruta')?.value || 'todas';
+
+      const filtrados = envios.filter(e => {
+        const coincideBusqueda = !busqueda || 
+          (e.radicado || '').toLowerCase().includes(busqueda) ||
+          (e.destinatario || '').toLowerCase().includes(busqueda) ||
+          (e.remitente || '').toLowerCase().includes(busqueda) ||
+          (e.asunto || '').toLowerCase().includes(busqueda);
+        
+        const coincideEstado = estadoFiltro === 'todos' || e.estado === estadoFiltro;
+        
+        let coincideRuta = true;
+        if (rutaFiltro !== 'todas') {
+          const [origenRuta, destinoRuta] = rutaFiltro.split('_');
+          coincideRuta = (e.origen === origenRuta && e.destino === destinoRuta);
+        }
+
+        return coincideBusqueda && coincideEstado && coincideRuta;
+      });
+
+      const tbody = document.getElementById('tabla-envios');
+      tbody.innerHTML = '';
+
+      if (filtrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs sm:text-sm">No se encontraron envíos con los criterios seleccionados.</td></tr>`;
+        return;
+      }
+
+      filtrados.forEach(item => {
+        const estInfo = ESTADOS[item.estado] || { label: item.estado, color: 'bg-slate-100 text-slate-700', icon: 'help-circle' };
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+        tr.innerHTML = `
+          <td class="px-4 py-3">
+            <span class="font-mono font-bold text-slate-900 block text-xs sm:text-sm">${item.radicado || 'N/A'}</span>
+            <span class="text-[11px] text-slate-400">${formatearFecha(item.creado_en)}</span>
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex items-center space-x-1 font-semibold text-xs">
+              <span class="bg-slate-100 px-2 py-0.5 rounded text-slate-700">${item.origen}</span>
+              <i data-lucide="arrow-right" class="w-3 h-3 text-slate-400"></i>
+              <span class="bg-indigo-50 px-2 py-0.5 rounded text-indigo-700 border border-indigo-100">${item.destino}</span>
+            </div>
+          </td>
+          <td class="px-4 py-3">
+            <p class="font-semibold text-slate-800 line-clamp-1 text-xs sm:text-sm">${item.asunto}</p>
+            <span class="text-[11px] text-slate-500">
+              ${item.tipo}
+              ${item.prioridad === 'Alta' ? ' · <strong class="text-rose-600 font-bold uppercase">Urgente</strong>' : ''}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-xs">
+            <div><strong class="text-slate-500">De:</strong> <span class="text-slate-700">${item.remitente}</span></div>
+            <div><strong class="text-slate-500">Para:</strong> <span class="font-semibold text-slate-900">${item.destinatario}</span></div>
+          </td>
+          <td class="px-4 py-3">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border ${estInfo.color}">
+              <span class="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-75"></span>
+              ${estInfo.label}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-right space-x-1 whitespace-nowrap">
+            <button onclick="verEtiqueta('${item.radicado}')" title="Imprimir etiqueta con código QR" class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
+              <i data-lucide="qr-code" class="w-4 h-4"></i>
+            </button>
+            <button onclick="verTrazabilidad('${item.radicado}')" title="Auditoría y trazabilidad completa" class="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+              <i data-lucide="history" class="w-4 h-4"></i>
+            </button>
+            <button onclick="cargarEnPuntoControl('${item.radicado}')" title="Cambiar custodia en punto de control" class="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition">
+              <i data-lucide="arrow-right-left" class="w-4 h-4"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      lucide.createIcons();
+    }
+
+    // ============== CREAR ENVÍO ==============
+    async function crearEnvio(event) {
+      event.preventDefault();
+
+      const origen = document.getElementById('rad-origen').value;
+      const destino = document.getElementById('rad-destino').value;
+      const remitente = document.getElementById('rad-remitente').value.trim();
+      const destinatario = document.getElementById('rad-destinatario').value.trim();
+      const tipo = document.getElementById('rad-tipo').value;
+      const prioridad = document.getElementById('rad-prioridad').value;
+      const asunto = document.getElementById('rad-asunto').value.trim();
+
+      if (!origen || !destino) {
+        mostrarToast('Seleccione sede de origen y destino', 'error');
+        return;
+      }
+      if (origen === destino) {
+        mostrarToast('La sede origen y destino deben ser distintas', 'error');
+        return;
+      }
+      if (!remitente || !destinatario || !asunto) {
+        mostrarToast('Complete todos los campos requeridos', 'error');
+        return;
+      }
+
+      try {
+        const nuevo = await api('/envios', {
+          method: 'POST',
+          body: JSON.stringify({ origen, destino, remitente, destinatario, tipo, prioridad, asunto })
+        });
+
+        envios.unshift(nuevo);
+        actualizarKPIs();
+        renderizarTabla();
+        actualizarAccesosRapidosRadicados();
+
+        document.getElementById('form-nuevo-envio').reset();
+        ajustarDestino();
+        limpiarCanvas();
+
+        verEtiqueta(nuevo.radicado);
+        mostrarToast('Documento radicado exitosamente: ' + nuevo.radicado, 'success');
+        
+        cambiarVista('envios');
+      } catch (err) {
+        console.error('Error al radicar:', err);
+        mostrarToast(err.error || 'Error al crear el envío', 'error');
+      }
+    }
+
+    // ============== PUNTO DE CONTROL ==============
+    function cargarEnPuntoControl(id) {
+      cambiarVista('control');
+      document.getElementById('scan-input').value = id;
+      buscarPorRadicado();
+    }
+
+    async function buscarPorRadicado() {
+      const codigo = document.getElementById('scan-input').value.trim().toUpperCase();
+      
+      if (codigo.length < 3) {
+        mostrarToast('Ingrese un radicado válido', 'error');
+        document.getElementById('panel-accion-custodia').classList.add('hidden');
+        return;
+      }
+
+      try {
+        const item = await api(`/envios/${codigo}`);
+        const panel = document.getElementById('panel-accion-custodia');
+        panel.classList.remove('hidden');
+
+        document.getElementById('custodia-radicado').textContent = item.radicado || item.id;
+        document.getElementById('custodia-asunto').textContent = item.asunto;
+        document.getElementById('custodia-ruta').textContent = `Ruta: ${item.origen} → ${item.destino} (${item.tipo})`;
+        document.getElementById('custodia-remitente').textContent = item.remitente;
+        document.getElementById('custodia-destinatario').textContent = item.destinatario;
+
+        const ultimoEvt = item.historial && item.historial.length > 0 ? item.historial[item.historial.length - 1] : null;
+        if (ultimoEvt) {
+          document.getElementById('custodia-ultimo-resp').textContent = ultimoEvt.responsable;
+          document.getElementById('custodia-ultimo-time').textContent = formatearFecha(ultimoEvt.fecha);
+        }
+
+        const est = ESTADOS[item.estado] || { label: item.estado, color: 'bg-slate-100 text-slate-800' };
+        document.getElementById('custodia-badge-estado').innerHTML = `
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${est.color}">
+            ${est.label}
+          </span>
+        `;
+
+        const container = document.getElementById('acciones-disponibles');
+        container.innerHTML = '';
+        const radicado = item.radicado || item.id;
+        const nombreOperador = usuario ? `${usuario.nombre} (${usuario.oficina})` : 'Operador';
+
+        if (item.estado === 'EN_ESPERA') {
+          container.innerHTML = `
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div>
+                <p class="text-xs text-blue-950 font-bold">Paso 1: Recolección y Despacho</p>
+                <p class="text-[11px] text-blue-700">El mensajero retira el sobre físicamente de la ventanilla de ${item.origen}.</p>
+              </div>
+              <button onclick="cambiarEstadoCustodia('${radicado}', 'EN_TRANSITO', 'Mensajero: Valija Motorizada (Despachó: ${nombreOperador})', 'Retirado de ${item.origen}. En tránsito hacia ${item.destino}.')" class="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow transition">
+                Registrar Salida en Tránsito
+              </button>
+            </div>
+          `;
+        } else if (item.estado === 'EN_TRANSITO') {
+          container.innerHTML = `
+            <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div>
+                <p class="text-xs text-purple-950 font-bold">Paso 2: Llegada a Sede Destino</p>
+                <p class="text-[11px] text-purple-700">La ventanilla de ${item.destino} recibe y verifica la valija física.</p>
+              </div>
+              <button onclick="cambiarEstadoCustodia('${radicado}', 'RECIBIDO_SEDE', 'Ventanilla ${item.destino} (Recibió: ${nombreOperador})', 'Recibido en sede ${item.destino}. Custodia asegurada y listo para entrega.')" class="w-full sm:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow transition">
+                Confirmar Recepción en ${item.destino}
+              </button>
+            </div>
+          `;
+        } else if (item.estado === 'RECIBIDO_SEDE') {
+          container.innerHTML = `
+            <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div>
+                <p class="text-xs text-emerald-950 font-bold">Paso 3: Entrega Final con Firma</p>
+                <p class="text-[11px] text-emerald-700">Entrega en mano al destinatario final capturando su firma digital en pantalla.</p>
+              </div>
+              <button onclick="abrirModalFirma('${radicado}')" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow transition">
+                Registrar Entrega y Firma
+              </button>
+            </div>
+          `;
+        } else if (item.estado === 'ENTREGADO') {
+          container.innerHTML = `
+            <div class="bg-slate-100 p-3.5 rounded-xl text-center text-xs text-slate-600 font-semibold border border-slate-200">
+              ✅ Este documento ya completó todo el ciclo de custodia y fue entregado exitosamente.
+            </div>
+          `;
+        }
+
+        lucide.createIcons();
+      } catch (err) {
+        mostrarToast('No se encontró el radicado: ' + codigo, 'error');
+        document.getElementById('panel-accion-custodia').classList.add('hidden');
+      }
+    }
+
+    async function cambiarEstadoCustodia(id, nuevoEstado, responsable, detalle) {
+      try {
+        const updated = await api(`/envios/${id}/estado`, {
+          method: 'PUT',
+          body: JSON.stringify({ estado: nuevoEstado, responsable, detalle })
+        });
+
+        const index = envios.findIndex(e => (e.radicado || e.id) === id);
+        if (index !== -1) {
+          envios[index] = updated;
+        }
+
+        actualizarKPIs();
+        renderizarTabla();
+        buscarPorRadicado();
+        mostrarToast('Estado actualizado: ' + ESTADOS[nuevoEstado].label, 'success');
+      } catch (err) {
+        console.error('Error al cambiar estado:', err);
+        mostrarToast(err.error || 'Error al cambiar estado', 'error');
+      }
+    }
+
+    // ============== MODAL DE FIRMA ==============
+    function abrirModalFirma(id) {
+      envioSeleccionadoParaFirma = id;
+      const item = envios.find(e => (e.radicado || e.id) === id);
+      if (item) {
+        document.getElementById('firma-nombre').value = item.destinatario;
+      }
+      limpiarCanvas();
+      document.getElementById('modal-firma').classList.remove('hidden');
+    }
+
+    async function confirmarEntregaConFirma() {
+      const nombre = document.getElementById('firma-nombre').value.trim();
+      if (!nombre) {
+        mostrarToast('Ingrese el nombre de la persona que recibe', 'error');
+        return;
+      }
+
+      const canvas = document.getElementById('signature-pad');
+      const firmaData = canvas.toDataURL();
+      const operadorEntrega = usuario ? ` (Entregó: ${usuario.nombre})` : '';
+
+      try {
+        const updated = await api(`/envios/${envioSeleccionadoParaFirma}/estado`, {
+          method: 'PUT',
+          body: JSON.stringify({ 
+            estado: 'ENTREGADO', 
+            responsable: `Entregado a: ${nombre}${operadorEntrega}`,
+            detalle: 'Constancia de entrega física firmada en pantalla digital.',
+            firma: firmaData
+          })
+        });
+
+        const index = envios.findIndex(e => (e.radicado || e.id) === envioSeleccionadoParaFirma);
+        if (index !== -1) {
+          envios[index] = updated;
+        }
+
+        actualizarKPIs();
+        renderizarTabla();
+        cerrarModal('modal-firma');
+        buscarPorRadicado();
+        mostrarToast('Entrega final registrada y firmada con éxito', 'success');
+      } catch (err) {
+        console.error('Error:', err);
+        mostrarToast(err.error || 'Error al confirmar entrega', 'error');
+      }
+    }
+
+    // ============== MODAL DE ETIQUETA Y QR ==============
+    function verEtiqueta(id) {
+      const item = envios.find(e => (e.radicado || e.id) === id);
+      if (!item) return;
+
+      const radicado = item.radicado || item.id;
+      document.getElementById('label-radicado').textContent = radicado;
+      document.getElementById('label-ruta').textContent = `${item.origen} ➔ ${item.destino}`;
+      document.getElementById('label-remitente').textContent = item.remitente;
+      document.getElementById('label-destinatario').textContent = item.destinatario;
+      document.getElementById('label-tipo').textContent = `${item.tipo} (${item.prioridad})`;
+      document.getElementById('label-fecha').textContent = formatearFecha(item.creado_en);
+
+      const qrContainer = document.getElementById('label-qrcode');
+      qrContainer.innerHTML = '';
+      new QRCode(qrContainer, {
+        text: radicado,
+        width: 140,
+        height: 140,
+        colorDark: "#0f172a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      document.getElementById('modal-etiqueta').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // ============== MODAL DE TRAZABILIDAD ==============
+    function verTrazabilidad(id) {
+      const item = envios.find(e => (e.radicado || e.id) === id);
+      if (!item) return;
+
+      const radicado = item.radicado || item.id;
+      document.getElementById('modal-traza-radicado').textContent = `Trazabilidad: ${radicado}`;
+      document.getElementById('modal-traza-asunto').textContent = `${item.asunto} (${item.origen} → ${item.destino})`;
+
+      const ol = document.getElementById('timeline-eventos');
+      ol.innerHTML = '';
+
+      if (item.historial && item.historial.length > 0) {
+        item.historial.forEach((evt) => {
+          const estInfo = ESTADOS[evt.estado] || { label: evt.estado, color: 'bg-slate-100 text-slate-800' };
+          const li = document.createElement('li');
+          li.className = 'mb-6 ml-6';
+          li.innerHTML = `
+            <span class="absolute flex items-center justify-center w-6 h-6 bg-white rounded-full -left-3 ring-4 ring-white border-2 border-indigo-600">
+              <span class="w-2 h-2 bg-indigo-600 rounded-full"></span>
+            </span>
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full border ${estInfo.color}">${estInfo.label}</span>
+                <time class="text-[11px] text-slate-400 font-mono">${formatearFecha(evt.fecha)}</time>
+              </div>
+              <p class="text-xs font-bold text-slate-900">${evt.responsable}</p>
+              <p class="text-xs text-slate-600">${evt.detalle}</p>
+              ${evt.firma ? `
+                <div class="mt-3 pt-2.5 border-t border-slate-200">
+                  <span class="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Firma Digital Capturada:</span>
+                  <img src="${evt.firma}" alt="Firma de entrega" class="h-14 bg-white border border-slate-200 rounded-xl mt-1 p-1">
+                </div>
+              ` : ''}
+            </div>
+          `;
+          ol.appendChild(li);
+        });
+      } else {
+        ol.innerHTML = '<li class="text-center text-slate-400 py-4 text-xs">No hay eventos registrados</li>';
+      }
+
+      document.getElementById('modal-trazabilidad').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function cerrarModal(idModal) {
+      document.getElementById(idModal).classList.add('hidden');
+    }
+
+    // ============== PAD DE FIRMA ==============
+    let dibujando = false;
+    let canvas, ctx;
+
+    function iniciarCanvasFirma() {
+      canvas = document.getElementById('signature-pad');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      function obtenerPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * (canvas.width / rect.width),
+          y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+      }
+
+      function empezar(e) {
+        dibujando = true;
+        const pos = obtenerPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+      }
+
+      function dibujar(e) {
+        if (!dibujando) return;
+        e.preventDefault();
+        const pos = obtenerPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      }
+
+      function parar() {
+        dibujando = false;
+      }
+
+      canvas.addEventListener('mousedown', empezar);
+      canvas.addEventListener('mousemove', dibujar);
+      window.addEventListener('mouseup', parar);
+
+      canvas.addEventListener('touchstart', empezar, { passive: false });
+      canvas.addEventListener('touchmove', dibujar, { passive: false });
+      window.addEventListener('touchend', parar);
+    }
+
+    function limpiarCanvas() {
+      if (ctx && canvas) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    // ============== UTILIDADES ==============
+    function actualizarContadorCaracteres() {
+      const texto = document.getElementById('rad-asunto')?.value || '';
+      const contador = document.getElementById('contador-caracteres');
+      if (!contador) return;
+      const max = 200;
+      const actual = texto.length;
+      contador.textContent = `${actual}/${max}`;
+      contador.className = actual > max * 0.9 
+        ? 'absolute top-2 right-3 text-[10px] px-1.5 py-0.5 rounded ' + (actual > max ? 'text-rose-500 bg-rose-50' : 'text-amber-600 bg-amber-50')
+        : 'absolute top-2 right-3 text-[10px] text-slate-400 bg-white px-1.5 py-0.5 rounded';
+    }
+
+    function validarLongitudCampo(input) {
+      const max = 200;
+      if (input.value.length > max) {
+        input.value = input.value.substring(0, max);
+        actualizarContadorCaracteres();
+      }
+    }
+
+    function formatearFecha(isoStr) {
+      if (!isoStr) return '';
+      try {
+        const d = new Date(isoStr);
+        return d.toLocaleString('es-CO', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch {
+        return isoStr;
+      }
+    }
+  </script>
+</body>
+</html>

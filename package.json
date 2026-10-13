@@ -1,0 +1,12 @@
+{
+  "name": "docutrack-express",
+  "version": "1.0.0",
+  "description": "Sistema de Control de Correspondencia Inter-Sedes",
+  "main": "server-single-file.js",
+  "scripts": {
+    "start": "node server-single-file.js"
+  },
+  "keywords": ["docutrack", "correspondencia", "custodia", "qr"],
+  "author": "DocuTrack Team",
+  "license": "MIT"
+}

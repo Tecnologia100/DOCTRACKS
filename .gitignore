@@ -1,0 +1,14 @@
+# Dependencias
+node_modules/
+
+# Archivos temporales y de respaldo
+*.tmp
+*.log
+*.zip
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store
+
+# Archivos de depuración y tareas locales
+test_backend.js

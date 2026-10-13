@@ -1,0 +1,251 @@
+{
+  "envios": [
+    {
+      "id": "d567e42b-1dce-4684-a115-43ec33b88113",
+      "radicado": "RAD-2026-0006",
+      "origen": "Administrativo",
+      "destino": "Planta",
+      "remitente": "Gerencia General",
+      "destinatario": "Superintendencia",
+      "tipo": "Valija Confidencial",
+      "prioridad": "Alta",
+      "asunto": "Plano de ampliación de planta 2026",
+      "estado": "EN_TRANSITO",
+      "creado_en": "2026-10-13T16:11:02.041Z",
+      "creado_por": "Admin Administrativo",
+      "actualizado_en": "2026-10-13T16:11:02.061Z",
+      "historial": [
+        {
+          "estado": "EN_ESPERA",
+          "fecha": "2026-10-13T16:11:02.041Z",
+          "responsable": "Recepción Administrativo (Admin Administrativo)",
+          "detalle": "Radicado creado por Gerencia General. En espera de recolección."
+        },
+        {
+          "estado": "EN_TRANSITO",
+          "fecha": "2026-10-13T16:11:02.061Z",
+          "responsable": "Admin Administrativo",
+          "detalle": "Mensajero motorizado en camino",
+          "firma": null
+        }
+      ]
+    },
+    {
+      "id": "74fc2d84-defa-4d79-b7d4-7bbbca366568",
+      "radicado": "RAD-2026-0005",
+      "origen": "Administrativo",
+      "destino": "Planta",
+      "remitente": "Gerencia General",
+      "destinatario": "Superintendencia",
+      "tipo": "Valija Confidencial",
+      "prioridad": "Alta",
+      "asunto": "Plano de ampliación de planta 2026",
+      "estado": "EN_TRANSITO",
+      "creado_en": "2026-10-13T16:07:01.430Z",
+      "creado_por": "Admin Administrativo",
+      "actualizado_en": "2026-10-13T16:07:01.440Z",
+      "historial": [
+        {
+          "estado": "EN_ESPERA",
+          "fecha": "2026-10-13T16:07:01.430Z",
+          "responsable": "Recepción Administrativo (Admin Administrativo)",
+          "detalle": "Radicado creado por Gerencia General. En espera de recolección."
+        },
+        {
+          "estado": "EN_TRANSITO",
+          "fecha": "2026-10-13T16:07:01.440Z",
+          "responsable": "Admin Administrativo",
+          "detalle": "Mensajero motorizado en camino",
+          "firma": null
+        }
+      ]
+    },
+    {
+      "id": "22f44915-88b6-4f4e-982b-c3f2e3d5295b",
+      "radicado": "RAD-2026-0004",
+      "origen": "Administrativo",
+      "destino": "Tesoreria",
+      "remitente": "dani",
+      "destinatario": "lux",
+      "tipo": "Contrato / Legal",
+      "prioridad": "Normal",
+      "asunto": "zxz",
+      "estado": "EN_TRANSITO",
+      "creado_en": "2026-10-13T15:39:58.357Z",
+      "creado_por": "Sistema",
+      "actualizado_en": "2026-10-13T15:41:01.965Z",
+      "historial": [
+        {
+          "estado": "EN_ESPERA",
+          "fecha": "2026-10-13T15:39:58.357Z",
+          "responsable": "Recepción Administrativo",
+          "detalle": "Radicado creado por dani. En espera de recolección."
+        },
+        {
+          "estado": "EN_TRANSITO",
+          "fecha": "2026-10-13T15:41:01.965Z",
+          "responsable": "Mensajero: Valija Motorizada",
+          "detalle": "Retirado de sede origen. En tránsito a destino.",
+          "firma": null
+        }
+      ]
+    },
+    {
+      "id": "demo-1",
+      "radicado": "RAD-2026-0001",
+      "origen": "Administrativo",
+      "destino": "Tesoreria",
+      "remitente": "Contabilidad - Ana María V.",
+      "destinatario": "Tesorería - Carlos R.",
+      "tipo": "Facturas / Cheques",
+      "prioridad": "Alta",
+      "asunto": "Facturas aprobadas para firma de cheque quincenal",
+      "estado": "EN_TRANSITO",
+      "creado_en": "2026-10-13T07:30:00",
+      "creado_por": "Sistema",
+      "actualizado_en": "2026-10-13T08:10:00",
+      "historial": [
+        {
+          "estado": "EN_ESPERA",
+          "fecha": "2026-10-13T07:30:00",
+          "responsable": "Recepción Administrativo",
+          "detalle": "Documento radicado y embalado en sobre"
+        },
+        {
+          "estado": "EN_TRANSITO",
+          "fecha": "2026-10-13T08:10:00",
+          "responsable": "Mensajero: Juan Morales",
+          "detalle": "Retirado de Administrativo. En ruta hacia Tesoreria"
+        }
+      ]
+    },
+    {
+      "id": "demo-2",
+      "radicado": "RAD-2026-0002",
+      "origen": "Tesoreria",
+      "destino": "Administrativo",
+      "remitente": "Recursos Humanos - Sofía T.",
+      "destinatario": "Nómina - Pedro Castro",
+      "tipo": "Contrato / Legal",
+      "prioridad": "Normal",
+      "asunto": "Contratos firmados de nuevos contratistas",
+      "estado": "RECIBIDO_SEDE",
+      "creado_en": "2026-10-12T15:20:00",
+      "creado_por": "Sistema",
+      "actualizado_en": "2026-10-13T07:50:00",
+      "historial": [
+        {
+          "estado": "EN_ESPERA",
+          "fecha": "2026-10-12T15:20:00",
+          "responsable": "Recepción Tesoreria",
+          "detalle": "Radicado generado"
+        },
+        {
+          "estado": "EN_TRANSITO",
+          "fecha": "2026-10-13T07:00:00",
+          "responsable": "Mensajero: Juan Morales",
+          "detalle": "Retirado de Tesoreria"
+        },
+        {
+          "estado": "RECIBIDO_SEDE",
+          "fecha": "2026-10-13T07:50:00",
+          "responsable": "Recepción Administrativo",
+          "detalle": "Ingresado a Administrativo. Listo para entrega a Nómina"
+        }
+      ]
+    },
+    {
+      "id": "demo-3",
+      "radicado": "RAD-2026-0003",
+      "origen": "Planta",
+      "destino": "Administrativo",
+      "remitente": "Jefe de Planta - Roberto M.",
+      "destinatario": "Auditoría Interna - Laura G.",
+      "tipo": "Valija Confidencial",
+      "prioridad": "Alta",
+      "asunto": "Informe de auditoría técnica confidencial",
+      "estado": "EN_ESPERA",
+      "creado_en": "2026-10-13T08:00:00",
+      "creado_por": "Sistema",
+      "actualizado_en": "2026-10-13T08:00:00",
+      "historial": [
+        {
+          "estado": "EN_ESPERA",
+          "fecha": "2026-10-13T08:00:00",
+          "responsable": "Recepción Planta",
+          "detalle": "Sobre sellado en espera de recolección"
+        }
+      ]
+    }
+  ],
+  "usuarios": [
+    {
+      "id": 1,
+      "username": "admin_a",
+      "password": "pbkdf2:0107dc22d421cbc7dda5fb1e551f7f82:10000:be3e0de3e2877f325f1c8967b1f68ae3ad4d2c509979f84f9c217e754cc96bb710a2bd9e0041d637d1aac3b76223803d6893eaba8c38b5cfc0962c8ef345fcd8",
+      "nombre": "Admin Administrativo",
+      "rol": "admin",
+      "oficina": "Administrativo",
+      "creado_en": "2026-10-01T00:00:00",
+      "token": "e7ca7e1c9c8d273a364bd5e6da57c9c6e5c6ad0208b34605f9969659bb241ae5",
+      "avatar": "building-shield",
+      "icono": "shield"
+    },
+    {
+      "id": 2,
+      "username": "admin_b",
+      "password": "pbkdf2:5979360e7ff6f428a06d037e6c9cc41e:10000:ddb21c1ec7f2186c96691ccdc3590347ad51a340157b05004863fd9b6717ecbe5ff068b87c8498192847c15527fddc87d9f0fc00008f709a3ddc0dcc915bd4aa",
+      "nombre": "Admin Tesoreria",
+      "rol": "admin",
+      "oficina": "Tesoreria",
+      "creado_en": "2026-10-01T00:00:00",
+      "avatar": "landmark",
+      "icono": "shield"
+    },
+    {
+      "id": 3,
+      "username": "admin_p",
+      "password": "pbkdf2:a5bdbffb164ddcf5ee0221cacde8e340:10000:6b3b68c12d60450a63e86d8a518f2e7e68548b117024d361869c853958fa581cd0c7d4e01479ae6710f5d6a5488f70e7e704be8af5d9a7bf82500d23d45bbc69",
+      "nombre": "Admin Planta",
+      "rol": "admin",
+      "oficina": "Planta",
+      "creado_en": "2026-10-01T00:00:00",
+      "avatar": "factory",
+      "icono": "shield"
+    },
+    {
+      "id": 4,
+      "username": "op_a",
+      "password": "pbkdf2:c9631eb09d0b239cc4710157adb449e1:10000:45309cfdf9783b422f2d6d8af98835dbd2c0e08e78f54f59d8be6b1a28fb24bba097084ffd29771636e95a7bbd6e2c9bd1b6e40660689b2765d1949c80c50d20",
+      "nombre": "Operador Administrativo",
+      "rol": "operador",
+      "oficina": "Administrativo",
+      "creado_en": "2026-10-01T00:00:00",
+      "avatar": "building-shield",
+      "icono": "user"
+    },
+    {
+      "id": 5,
+      "username": "op_b",
+      "password": "pbkdf2:0e7661300d40bbc89050602732d90dd9:10000:1991a8855221df9ff90d62cb8ea60267f5c3a5386daf28ab24ec1cf24a74532a9d3166906fefb02ded7684e60d6b2872ee3188e40bf97965e644c58dc4562f7d",
+      "nombre": "Operador Tesoreria",
+      "rol": "operador",
+      "oficina": "Tesoreria",
+      "creado_en": "2026-10-01T00:00:00",
+      "avatar": "landmark",
+      "icono": "user"
+    },
+    {
+      "id": 6,
+      "username": "op_p",
+      "password": "pbkdf2:601fc8603fba7dff497b54fbcc0c3fee:10000:d0b1691e4dd2a710156fdfe80a6ce504fcdbaf6589d0c6cf8fd9e0c0cb477ee8076b7e521530de0c79f343b32113f2a182c227610857379f5c16719abae6ac82",
+      "nombre": "Operador Planta",
+      "rol": "operador",
+      "oficina": "Planta",
+      "creado_en": "2026-10-01T00:00:00",
+      "avatar": "factory",
+      "icono": "user"
+    }
+  ],
+  "contador": 7
+}
